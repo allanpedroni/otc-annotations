@@ -203,6 +203,11 @@ namespace Otc.ComponentModel.DataAnnotations
             }
         }
 
+        /// <summary>
+        /// Gets or sets and explicit error key string.
+        /// </summary>
+        public virtual string ErrorKey { get; set; }
+
         #endregion
 
         #region Private Methods
@@ -406,7 +411,7 @@ namespace Otc.ComponentModel.DataAnnotations
                 string[] memberNames = validationContext.MemberName != null
                     ? new string[] { validationContext.MemberName }
                     : null;
-                result = new ValidationResult(FormatErrorMessage(validationContext.DisplayName), memberNames);
+                result = new ValidationResult(FormatErrorMessage(validationContext.DisplayName), memberNames, ErrorKey);
             }
 
             return result;
