@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Otc.ComponentModel.Annotati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Otc.ComponentModel.Annotations.Tests", "tests\Otc.ComponentModel.Annotations.Tests.csproj", "{C0D9D824-F6E8-4789-8F5A-95D1ACE69EE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnnotationsSampleApp", "sample\AnnotationsSampleApp.csproj", "{B418D73A-9AB9-443C-8C85-800BF41F453A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C0D9D824-F6E8-4789-8F5A-95D1ACE69EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D9D824-F6E8-4789-8F5A-95D1ACE69EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0D9D824-F6E8-4789-8F5A-95D1ACE69EE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B418D73A-9AB9-443C-8C85-800BF41F453A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B418D73A-9AB9-443C-8C85-800BF41F453A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B418D73A-9AB9-443C-8C85-800BF41F453A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B418D73A-9AB9-443C-8C85-800BF41F453A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

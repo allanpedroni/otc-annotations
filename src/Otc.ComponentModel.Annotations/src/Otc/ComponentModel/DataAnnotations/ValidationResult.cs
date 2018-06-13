@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Otc.ComponentModel.DataAnnotations
 {
@@ -34,6 +35,7 @@ namespace Otc.ComponentModel.DataAnnotations
 
         private readonly IEnumerable<string> _memberNames;
         private string _errorMessage;
+        private string _errorKey;
 
         #endregion
 
@@ -68,6 +70,35 @@ namespace Otc.ComponentModel.DataAnnotations
         {
             _errorMessage = errorMessage;
             _memberNames = memberNames ?? Array.Empty<string>();
+
+            if (_memberNames.Any())
+            {
+                _errorKey = string.Join(", ", _memberNames.OrderBy(m => m));
+            }
+        }
+
+        /// <summary>
+        ///     Constructor that accepts an error message as well as a list of member names involved in the validation.
+        ///     This error message would override any error message provided on the <see cref="ValidationAttribute" />.
+        /// </summary>
+        /// <param name="errorMessage">
+        ///     The user-visible error message.  If null, <see cref="ValidationAttribute.GetValidationResult" />
+        ///     will use <see cref="ValidationAttribute.FormatErrorMessage" /> for its error message.
+        /// </param>
+        /// <param name="memberNames">
+        ///     The list of member names affected by this result.
+        ///     This list of member names is meant to be used by presentation layers to indicate which fields are in error.
+        /// </param>
+        /// <param name="errorKey">
+        ///     The user-visible error key.
+        /// </param>
+        public ValidationResult(string errorMessage, IEnumerable<string> memberNames, string errorKey)
+            : this(errorMessage, memberNames)
+        {
+            if (errorKey != null)
+            {
+                _errorKey = errorKey;
+            }
         }
 
         /// <summary>
@@ -84,6 +115,7 @@ namespace Otc.ComponentModel.DataAnnotations
 
             _errorMessage = validationResult._errorMessage;
             _memberNames = validationResult._memberNames;
+            _errorKey = validationResult._errorKey;
         }
 
         #endregion
@@ -105,6 +137,15 @@ namespace Otc.ComponentModel.DataAnnotations
         {
             get { return _errorMessage; }
             set { _errorMessage = value; }
+        }
+
+        /// <summary>
+        ///     Gets the error key for this result.  It may be null.
+        /// </summary>
+        public string ErrorKey
+        {
+            get { return _errorKey; }
+            set { _errorKey = value; }
         }
 
         #endregion
