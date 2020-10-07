@@ -29,12 +29,12 @@ namespace Otc.ComponentModel.DataAnnotations
     {
         #region Member Fields
 
-        private string _errorMessage;
-        private Func<string> _errorMessageResourceAccessor;
-        private string _errorMessageResourceName;
-        private Type _errorMessageResourceType;
-        private volatile bool _hasBaseIsValid;
-        private string _defaultErrorMessage;
+        private string errorMessage;
+        private Func<string> errorMessageResourceAccessor;
+        private string errorMessageResourceName;
+        private Type errorMessageResourceType;
+        private volatile bool hasBaseIsValid;
+        private string defaultErrorMessage;
         #endregion
 
         #region All Constructors
@@ -70,7 +70,7 @@ namespace Otc.ComponentModel.DataAnnotations
         protected ValidationAttribute(Func<string> errorMessageAccessor)
         {
             // If null, will later be exposed as lack of error message to be able to construct accessor
-            _errorMessageResourceAccessor = errorMessageAccessor;
+            errorMessageResourceAccessor = errorMessageAccessor;
         }
 
         #endregion
@@ -87,12 +87,12 @@ namespace Otc.ComponentModel.DataAnnotations
         {
             get
             {
-                return _defaultErrorMessage;
+                return defaultErrorMessage;
             }
             set
             {
-                _defaultErrorMessage = value;
-                _errorMessageResourceAccessor = null;
+                defaultErrorMessage = value;
+                errorMessageResourceAccessor = null;
                 CustomErrorMessageSet = true;
             }
         }
@@ -110,7 +110,7 @@ namespace Otc.ComponentModel.DataAnnotations
             get
             {
                 SetupResourceAccessor();
-                return _errorMessageResourceAccessor();
+                return errorMessageResourceAccessor();
             }
         }
 
@@ -147,19 +147,19 @@ namespace Otc.ComponentModel.DataAnnotations
             {
                 // If _errorMessage is not set, return the default. This is done to preserve
                 // behavior prior to the fix where ErrorMessage showed the non-null message to use.
-                return _errorMessage ?? _defaultErrorMessage;
+                return errorMessage ?? defaultErrorMessage;
             }
             set
             {
-                _errorMessage = value;
-                _errorMessageResourceAccessor = null;
+                errorMessage = value;
+                errorMessageResourceAccessor = null;
                 CustomErrorMessageSet = true;
 
                 // Explicitly setting ErrorMessage also sets DefaultErrorMessage if null.
                 // This prevents subsequent read of ErrorMessage from returning default.
                 if (value == null)
                 {
-                    _defaultErrorMessage = null;
+                    defaultErrorMessage = null;
                 }
             }
         }
@@ -173,11 +173,11 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </value>
         public string ErrorMessageResourceName
         {
-            get { return _errorMessageResourceName; }
+            get { return errorMessageResourceName; }
             set
             {
-                _errorMessageResourceName = value;
-                _errorMessageResourceAccessor = null;
+                errorMessageResourceName = value;
+                errorMessageResourceAccessor = null;
                 CustomErrorMessageSet = true;
             }
         }
@@ -194,11 +194,11 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </value>
         public Type ErrorMessageResourceType
         {
-            get { return _errorMessageResourceType; }
+            get { return errorMessageResourceType; }
             set
             {
-                _errorMessageResourceType = value;
-                _errorMessageResourceAccessor = null;
+                errorMessageResourceType = value;
+                errorMessageResourceAccessor = null;
                 CustomErrorMessageSet = true;
             }
         }
@@ -219,13 +219,13 @@ namespace Otc.ComponentModel.DataAnnotations
         /// <exception cref="InvalidOperationException"> is thrown if the current attribute is malformed.</exception>
         private void SetupResourceAccessor()
         {
-            if (_errorMessageResourceAccessor == null)
+            if (errorMessageResourceAccessor == null)
             {
                 string localErrorMessage = ErrorMessage;
-                bool resourceNameSet = !string.IsNullOrEmpty(_errorMessageResourceName);
-                bool errorMessageSet = !string.IsNullOrEmpty(_errorMessage);
-                bool resourceTypeSet = _errorMessageResourceType != null;
-                bool defaultMessageSet = !string.IsNullOrEmpty(_defaultErrorMessage);
+                bool resourceNameSet = !string.IsNullOrEmpty(errorMessageResourceName);
+                bool errorMessageSet = !string.IsNullOrEmpty(errorMessage);
+                bool resourceTypeSet = errorMessageResourceType != null;
+                bool defaultMessageSet = !string.IsNullOrEmpty(defaultErrorMessage);
 
                 // The following combinations are illegal and throw InvalidOperationException:
                 //   1) Both ErrorMessage and ErrorMessageResourceName are set, or
@@ -252,7 +252,7 @@ namespace Otc.ComponentModel.DataAnnotations
                 {
                     // Here if not using resource type/name -- the accessor is just the error message string,
                     // which we know is not empty to have gotten this far.
-                    _errorMessageResourceAccessor = delegate
+                    errorMessageResourceAccessor = delegate
                     {
                         // We captured error message to local in case it changes before accessor runs
                         return localErrorMessage;
@@ -263,10 +263,10 @@ namespace Otc.ComponentModel.DataAnnotations
 
         private void SetResourceAccessorByPropertyLookup()
         {
-            if (_errorMessageResourceType != null && !string.IsNullOrEmpty(_errorMessageResourceName))
+            if (errorMessageResourceType != null && !string.IsNullOrEmpty(errorMessageResourceName))
             {
-                var property = _errorMessageResourceType
-                    .GetTypeInfo().GetDeclaredProperty(_errorMessageResourceName);
+                var property = errorMessageResourceType
+                    .GetTypeInfo().GetDeclaredProperty(errorMessageResourceName);
                 if (property != null && !ValidationAttributeStore.IsStatic(property))
                 {
                     property = null;
@@ -290,8 +290,8 @@ namespace Otc.ComponentModel.DataAnnotations
                         string.Format(
                             CultureInfo.CurrentCulture,
                             SR.ValidationAttribute_ResourceTypeDoesNotHaveProperty,
-                            _errorMessageResourceType.FullName,
-                            _errorMessageResourceName));
+                            errorMessageResourceType.FullName,
+                            errorMessageResourceName));
                 }
 
                 if (property.PropertyType != typeof(string))
@@ -301,10 +301,10 @@ namespace Otc.ComponentModel.DataAnnotations
                             CultureInfo.CurrentCulture,
                             SR.ValidationAttribute_ResourcePropertyNotStringType,
                             property.Name,
-                            _errorMessageResourceType.FullName));
+                            errorMessageResourceType.FullName));
                 }
 
-                _errorMessageResourceAccessor = delegate { return (string)property.GetValue(null, null); };
+                errorMessageResourceAccessor = delegate { return (string)property.GetValue(null, null); };
             }
             else
             {
@@ -362,10 +362,10 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </exception>
         public virtual bool IsValid(object value)
         {
-            if (!_hasBaseIsValid)
+            if (!hasBaseIsValid)
             {
                 // track that this method overload has not been overridden.
-                _hasBaseIsValid = true;
+                hasBaseIsValid = true;
             }
 
             // call overridden method.
@@ -396,7 +396,7 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </exception>
         protected virtual ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (_hasBaseIsValid)
+            if (hasBaseIsValid)
             {
                 // this means neither of the IsValid methods has been overridden, throw.
                 throw NotImplemented.ByDesignWithMessage(

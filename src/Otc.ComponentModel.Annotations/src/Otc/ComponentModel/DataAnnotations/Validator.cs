@@ -22,7 +22,7 @@ namespace Otc.ComponentModel.DataAnnotations
     /// </summary>
     public static class Validator
     {
-        private static readonly ValidationAttributeStore _store = ValidationAttributeStore.Instance;
+        private static readonly ValidationAttributeStore store = ValidationAttributeStore.Instance;
 
         /// <summary>
         ///     Tests whether the given property value is valid.
@@ -56,14 +56,14 @@ namespace Otc.ComponentModel.DataAnnotations
             ICollection<ValidationResult> validationResults)
         {
             // Throw if value cannot be assigned to this property.  That is not a validation exception.
-            var propertyType = _store.GetPropertyType(validationContext);
+            var propertyType = store.GetPropertyType(validationContext);
             var propertyName = validationContext.MemberName;
             EnsureValidPropertyType(propertyName, propertyType, value);
 
             var result = true;
             var breakOnFirstError = (validationResults == null);
 
-            var attributes = _store.GetPropertyValidationAttributes(validationContext);
+            var attributes = store.GetPropertyValidationAttributes(validationContext);
 
             foreach (var err in GetValidationErrors(value, validationContext, attributes, breakOnFirstError))
             {
@@ -234,10 +234,10 @@ namespace Otc.ComponentModel.DataAnnotations
         public static void ValidateProperty(object value, ValidationContext validationContext)
         {
             // Throw if value cannot be assigned to this property.  That is not a validation exception.
-            var propertyType = _store.GetPropertyType(validationContext);
+            var propertyType = store.GetPropertyType(validationContext);
             EnsureValidPropertyType(validationContext.MemberName, propertyType, value);
 
-            var attributes = _store.GetPropertyValidationAttributes(validationContext);
+            var attributes = store.GetPropertyValidationAttributes(validationContext);
 
             var err = GetValidationErrors(value, validationContext, attributes, false).FirstOrDefault();
             if (err != null)
@@ -459,7 +459,7 @@ nameof(value));
             }
 
             // Step 2: Validate the object's validation attributes
-            var attributes = _store.GetTypeValidationAttributes(validationContext);
+            var attributes = store.GetTypeValidationAttributes(validationContext);
             errors.AddRange(GetValidationErrors(instance, validationContext, attributes, breakOnFirstError));
 
             // We only proceed to Step 3 if there are no errors
@@ -503,7 +503,7 @@ nameof(value));
             foreach (var property in properties)
             {
                 // get list of all validation attributes for this property
-                var attributes = _store.GetPropertyValidationAttributes(property.Key);
+                var attributes = store.GetPropertyValidationAttributes(property.Key);
 
                 if (validateAllProperties)
                 {
@@ -548,23 +548,23 @@ nameof(value));
         private static ICollection<KeyValuePair<ValidationContext, object>> GetPropertyValues(object instance,
             ValidationContext validationContext)
         {
-            var properties = instance.GetType().GetRuntimeProperties()
-                                .Where(p => ValidationAttributeStore.IsPublic(p) && !p.GetIndexParameters().Any());
+            var properties = store.GetAllPropertiesInfoAndHisValues(validationContext);
+
             var items = new List<KeyValuePair<ValidationContext, object>>(properties.Count());
-            foreach (var property in properties)
+
+            foreach (var item in properties)
             {
                 var context = CreateValidationContext(instance, validationContext);
-                context.MemberName = property.Name;
+                context.MemberName = item.Key.Name;
 
-                if (_store.GetPropertyValidationAttributes(context).Any())
+                if (store.GetPropertyValidationAttributes(context).Any())
                 {
-                    items.Add(new KeyValuePair<ValidationContext, object>(context, property.GetValue(instance, null)));
+                    items.Add(new KeyValuePair<ValidationContext, object>(context, item.Value));
                 }
             }
 
             return items;
         }
-
 
         /// <summary>
         ///     Internal iterator to enumerate all validation errors for an value.

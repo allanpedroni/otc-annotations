@@ -35,11 +35,11 @@ namespace Otc.ComponentModel.DataAnnotations
     {
         #region Member Fields
 
-        private readonly Dictionary<object, object> _items;
-        private readonly object _objectInstance;
-        private string _displayName;
-        private string _memberName;
-        private Func<Type, object> _serviceProvider;
+        private readonly Dictionary<object, object> items;
+        private readonly object objectInstance;
+        private string displayName;
+        private string memberName;
+        private Func<Type, object> serviceProvider;
 
         #endregion
 
@@ -101,14 +101,14 @@ namespace Otc.ComponentModel.DataAnnotations
 
             if (items != null)
             {
-                _items = new Dictionary<object, object>(items);
+                this.items = new Dictionary<object, object>(items);
             }
             else
             {
-                _items = new Dictionary<object, object>();
+                this.items = new Dictionary<object, object>();
             }
 
-            _objectInstance = instance;
+            objectInstance = instance;
         }
 
         #endregion
@@ -127,7 +127,7 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </remarks>
         public object ObjectInstance
         {
-            get { return _objectInstance; }
+            get { return objectInstance; }
         }
 
         /// <summary>
@@ -151,15 +151,15 @@ namespace Otc.ComponentModel.DataAnnotations
         {
             get
             {
-                if (string.IsNullOrEmpty(_displayName))
+                if (string.IsNullOrEmpty(displayName))
                 {
-                    _displayName = GetDisplayName();
-                    if (string.IsNullOrEmpty(_displayName))
+                    displayName = GetDisplayName();
+                    if (string.IsNullOrEmpty(displayName))
                     {
-                        _displayName = ObjectType.Name;
+                        displayName = ObjectType.Name;
                     }
                 }
-                return _displayName;
+                return displayName;
             }
             set
             {
@@ -167,7 +167,7 @@ namespace Otc.ComponentModel.DataAnnotations
                 {
                     throw new ArgumentNullException(nameof(value));
                 }
-                _displayName = value;
+                displayName = value;
             }
         }
 
@@ -180,8 +180,8 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </value>
         public string MemberName
         {
-            get { return _memberName; }
-            set { _memberName = value; }
+            get { return memberName; }
+            set { memberName = value; }
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </value>
         public IDictionary<object, object> Items
         {
-            get { return _items; }
+            get { return items; }
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace Otc.ComponentModel.DataAnnotations
             ValidationAttributeStore store = ValidationAttributeStore.Instance;
             DisplayAttribute displayAttribute = null;
 
-            if (string.IsNullOrEmpty(_memberName))
+            if (string.IsNullOrEmpty(memberName))
             {
                 displayAttribute = store.GetTypeDisplayAttribute(this);
             }
@@ -238,7 +238,7 @@ namespace Otc.ComponentModel.DataAnnotations
         /// </param>
         public void InitializeServiceProvider(Func<Type, object> serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
         }
 
         #endregion
@@ -252,9 +252,9 @@ namespace Otc.ComponentModel.DataAnnotations
         /// <returns>An instance of that service or null if it is not available.</returns>
         public object GetService(Type serviceType)
         {
-            if (_serviceProvider != null)
+            if (serviceProvider != null)
             {
-                return _serviceProvider(serviceType);
+                return serviceProvider(serviceType);
             }
 
             return null;
